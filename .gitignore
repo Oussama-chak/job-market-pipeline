@@ -8,9 +8,7 @@ __pycache__/
 # Env
 .env
 
-# Data (important)
-data/raw/
-data/processed/
+
 
 
 # OS
