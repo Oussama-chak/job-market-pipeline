@@ -20,8 +20,8 @@ def build_csv_dataframe(csv_path: str) -> pd.DataFrame:
     return mapped_csv_df
 
 
-def build_adzuna_dataframe(page: int = 1, results_per_page: int = 10) -> pd.DataFrame:
-    jobs = fetch_target_jobs(page=page, results_per_page=results_per_page)
+def build_adzuna_dataframe(page: int = 10, results_per_page: int = 30) -> pd.DataFrame:
+    jobs = fetch_target_jobs()
     mapped_jobs = [map_adzuna_job_to_schema(job) for job in jobs]
 
     if not mapped_jobs:
@@ -34,8 +34,8 @@ def build_adzuna_dataframe(page: int = 1, results_per_page: int = 10) -> pd.Data
 
 def run_batch_pipeline(
     csv_path: str,
-    adzuna_page: int = 1,
-    adzuna_results_per_page: int = 10,
+    adzuna_page: int = 10,
+    adzuna_results_per_page: int = 30,
 ) -> pd.DataFrame:
     csv_df = build_csv_dataframe(csv_path)
     adzuna_df = build_adzuna_dataframe(
@@ -52,8 +52,8 @@ if __name__ == "__main__":
 
     unified_df = run_batch_pipeline(
         csv_path=csv_file,
-        adzuna_page=1,
-        adzuna_results_per_page=10,
+        adzuna_page=3,
+        adzuna_results_per_page=30,
     )
 
     print("\nUnified dataset shape:", unified_df.shape)
