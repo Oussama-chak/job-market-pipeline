@@ -1,6 +1,31 @@
 import pandas as pd
 
 
+COUNTRY_MAPPING = {
+    "US": "USA",
+    
+
+    "DE": "Germany",
+    "Germany": "Germany",
+    "Deutschland": "Germany",
+
+}
+
+
+def normalize_country(df: pd.DataFrame) -> pd.DataFrame:
+    df = df.copy()
+
+    df["country"] = (
+        df["country"]
+        .astype("string")
+        .str.strip()
+        .map(COUNTRY_MAPPING)
+        .fillna(df["country"])
+    )
+
+    return df
+
+
 def normalize_remote_type(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
 
@@ -36,7 +61,6 @@ def normalize_experience_level(df: pd.DataFrame) -> pd.DataFrame:
         "internship": "Entry",
         "mid": "Mid",
         "intermediate": "Mid",
-        "mid-level": "Mid",
         "senior": "Senior",
         "sr": "Senior",
         "lead": "Senior",
@@ -44,6 +68,8 @@ def normalize_experience_level(df: pd.DataFrame) -> pd.DataFrame:
         "director": "Senior",
         "architect": "Senior",
         "head": "Senior",
+
+
     }
 
     normalized = (

@@ -6,12 +6,14 @@ from app.schema.unified_schema import UNIFIED_JOB_FIELDS
 from app.transformation.cleaning import (
     strip_text_columns,
     replace_empty_strings_with_null,
+    clean_job_title_and_city_with_ftfy,
     clean_salary_columns,
     impute_salary_by_country_mean,
     clean_posted_year,
     drop_duplicates,
 )
 from app.transformation.normalization import (
+    normalize_country,
     normalize_remote_type,
     normalize_experience_level,
     normalize_employment_type,
@@ -30,7 +32,9 @@ def transform_jobs_dataframe(df: pd.DataFrame) -> pd.DataFrame:
 
     transformed_df = strip_text_columns(transformed_df)
     transformed_df = replace_empty_strings_with_null(transformed_df)
+    transformed_df = clean_job_title_and_city_with_ftfy(transformed_df)
 
+    transformed_df = normalize_country(transformed_df)
     transformed_df = normalize_remote_type(transformed_df)
     transformed_df = normalize_experience_level(transformed_df)
     transformed_df = normalize_employment_type(transformed_df)
@@ -60,6 +64,8 @@ if __name__ == "__main__":
     print(batch_df[["salary_min_usd", "salary_max_usd"]].isnull().sum())
 
     transformed_df = transform_jobs_dataframe(batch_df)
+    print("\nUnique countries before transformation:")
+    print(sorted(batch_df["country"].dropna().astype(str).unique()))
 
     print("\nTransformed dataframe shape:")
     print(summarize_shape(transformed_df))
@@ -67,8 +73,11 @@ if __name__ == "__main__":
     print("\nMissing salary values after transformation:")
     print(transformed_df[["salary_min_usd", "salary_max_usd"]].isnull().sum())
 
+
     print("\nNull summary after transformation:")
     print(summarize_nulls(transformed_df))
+    print("\nUnique countries after transformation:")
+    print(sorted(transformed_df["country"].dropna().astype(str).unique()))
 
     print("\nSample transformed rows:")
     print(transformed_df.head())

@@ -1,4 +1,6 @@
+import re
 import pandas as pd
+from ftfy import fix_text
 
 
 TEXT_COLUMNS = [
@@ -9,6 +11,56 @@ TEXT_COLUMNS = [
     "experience_level",
     "employment_type",
 ]
+
+TEXT_CLEAN_COLUMNS = ["job_title", "city"]
+
+
+def _normalize_whitespace(value: str) -> str:
+    if not isinstance(value, str):
+        return value
+
+    value = value.replace("\n", " ").replace("\r", " ").replace("\t", " ")
+    value = re.sub(r"\s+", " ", value).strip()
+    return value
+
+
+def fix_text_with_ftfy(value: str) -> str:
+    """
+    Fix mojibake / encoding issues while preserving valid Unicode text (ftfy).
+    Examples: KÃ¶ln -> Köln, DÃ©veloppeur -> Développeur
+    """
+    if not isinstance(value, str):
+        return value
+    try:
+        return fix_text(value)
+    except Exception:
+        return value
+
+
+def _ftfy_then_normalize_whitespace(value):
+    if pd.isna(value) or not isinstance(value, str):
+        return value
+    return _normalize_whitespace(fix_text_with_ftfy(value))
+
+
+def clean_text_columns_with_ftfy(
+    df: pd.DataFrame,
+    columns: list[str] | None = None,
+) -> pd.DataFrame:
+    """
+    Run ftfy + whitespace normalization on each cell of the given columns.
+    """
+    cols = TEXT_CLEAN_COLUMNS if columns is None else columns
+    df = df.copy()
+    for col in cols:
+        if col in df.columns:
+            df[col] = df[col].apply(_ftfy_then_normalize_whitespace)
+    return df
+
+
+def clean_job_title_and_city_with_ftfy(df: pd.DataFrame) -> pd.DataFrame:
+    """ftfy + whitespace for job_title and city."""
+    return clean_text_columns_with_ftfy(df, TEXT_CLEAN_COLUMNS)
 
 
 def strip_text_columns(df: pd.DataFrame) -> pd.DataFrame:
@@ -37,11 +89,9 @@ def clean_salary_columns(df: pd.DataFrame) -> pd.DataFrame:
     df["salary_min_usd"] = pd.to_numeric(df["salary_min_usd"], errors="coerce")
     df["salary_max_usd"] = pd.to_numeric(df["salary_max_usd"], errors="coerce")
 
-    # Remove negative values
     df.loc[df["salary_min_usd"] < 0, "salary_min_usd"] = pd.NA
     df.loc[df["salary_max_usd"] < 0, "salary_max_usd"] = pd.NA
 
-    # If min > max, swap them
     swap_mask = (
         df["salary_min_usd"].notna()
         & df["salary_max_usd"].notna()
@@ -70,18 +120,12 @@ def impute_salary_by_country_mean(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def clean_posted_year(
-    df: pd.DataFrame,
-    min_year: int = 2020,
-    max_year: int = 2026,
-) -> pd.DataFrame:
+def clean_posted_year(df: pd.DataFrame, min_year: int = 2020, max_year: int = 2026) -> pd.DataFrame:
     df = df.copy()
 
     df["posted_year"] = pd.to_numeric(df["posted_year"], errors="coerce")
-
     invalid_mask = (df["posted_year"] < min_year) | (df["posted_year"] > max_year)
     df.loc[invalid_mask, "posted_year"] = pd.NA
-
     df["posted_year"] = df["posted_year"].astype("Int64")
 
     return df

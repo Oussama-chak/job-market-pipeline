@@ -28,7 +28,7 @@ TARGET_ROLE_QUERIES = [
 ]
 
 FALLBACK_QUERIES = {
-    "MLOps Engineer": ["Machine Learning", "Data Engineer", "Data"],
+    "MLOps Engineer": ["Machine Learning","MLOps", "Data Engineer", "Data"],
     "Data Analyst": ["Analytics", "Business Intelligence", "Data"],
     "Applied Scientist": ["Machine Learning", "AI", "Data Science"],
     "Machine Learning Engineer": ["Machine Learning", "ML Engineer", "AI"],
