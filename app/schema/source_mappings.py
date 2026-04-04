@@ -9,6 +9,7 @@ CSV_MAPPING = {
     "salary_max_usd": "salary_max_usd",
     "employment_type": "employment_type",
     "posted_year": "posted_year",
+    "description": "description",
 }
 
 AADZUNA_MAPPING = {
@@ -22,4 +23,5 @@ AADZUNA_MAPPING = {
     "salary_max_usd": "salary_max",
     "employment_type": "contract_time",
     "posted_year": "created",
+    "description": "description",
 }

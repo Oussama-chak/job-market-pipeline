@@ -1,6 +1,7 @@
 UNIFIED_JOB_FIELDS = [
     "job_id",
     "job_title",
+    "description",
     "country",
     "city",
     "remote_type",

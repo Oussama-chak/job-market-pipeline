@@ -256,6 +256,7 @@ def map_adzuna_job_to_schema(job: dict[str, Any]) -> dict[str, Any]:
     return {
         "job_id": str(job.get("id")) if job.get("id") is not None else None,
         "job_title": job.get("title"),
+        "description": job.get("description"),
         "country": country,
         "city": city,
         "remote_type": remote_type,
@@ -264,6 +265,7 @@ def map_adzuna_job_to_schema(job: dict[str, Any]) -> dict[str, Any]:
         "salary_max_usd": job.get("salary_max"),
         "employment_type": employment_type,
         "posted_year": posted_year,
+        "job_description": job.get("description"),
     }
 
 

@@ -5,6 +5,7 @@ from ftfy import fix_text
 
 TEXT_COLUMNS = [
     "job_title",
+    "description",
     "country",
     "city",
     "remote_type",

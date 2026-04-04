@@ -24,6 +24,12 @@ def map_csv_to_schema(df: pd.DataFrame) -> pd.DataFrame:
 
     mapped_df["job_id"] = df["job_id"].astype(str)
     mapped_df["job_title"] = df["job_title"]
+    if "description" in df.columns:
+        mapped_df["description"] = df["description"]
+    elif "job_description" in df.columns:
+        mapped_df["description"] = df["job_description"]
+    else:
+        mapped_df["description"] = pd.NA
     mapped_df["country"] = df["country"]
     mapped_df["city"] = df["city"]
     mapped_df["remote_type"] = df["remote_type"]
