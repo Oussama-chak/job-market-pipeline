@@ -9,7 +9,10 @@ from app.transformation.cleaning import (
     clean_job_title_and_city_with_ftfy,
     clean_salary_columns,
     impute_salary_by_country_mean,
+    fill_missing_city,
     clean_posted_year,
+    fill_missing_employment_type,
+    fill_missing_remote_type,
     drop_duplicates,
 )
 from app.transformation.normalization import (
@@ -38,9 +41,11 @@ def transform_jobs_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     transformed_df = normalize_remote_type(transformed_df)
     transformed_df = normalize_experience_level(transformed_df)
     transformed_df = normalize_employment_type(transformed_df)
-
+    transformed_df = fill_missing_city(transformed_df)
     transformed_df = clean_salary_columns(transformed_df)
     transformed_df = impute_salary_by_country_mean(transformed_df)
+    transformed_df = fill_missing_employment_type(transformed_df)
+    transformed_df = fill_missing_remote_type(transformed_df)
     transformed_df = clean_posted_year(transformed_df)
 
     transformed_df = drop_duplicates(transformed_df)

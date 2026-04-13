@@ -98,6 +98,43 @@ def fetch_adzuna_jobs(
     response.raise_for_status()
     data = response.json()
     return data.get("results", [])
+def fetch_page_window_for_query(
+    country: str,
+    what: str,
+    start_page: int = 1,
+    end_page: int = 10,
+    results_per_page: int = 25,
+    use_category: bool = True,
+) -> list[dict[str, Any]]:
+    collected = []
+    seen_ids = set()
+
+    for page in range(start_page, end_page + 1):
+        jobs = fetch_adzuna_jobs(
+            country=country,
+            what=what,
+            page=page,
+            results_per_page=results_per_page,
+            use_category=use_category,
+        )
+
+        print(f"country={country} query='{what}' page={page} fetched={len(jobs)}")
+
+        if not jobs:
+            break
+
+        new_count = 0
+        for job in jobs:
+            job_id = str(job.get("id")) if job.get("id") is not None else None
+            if job_id and job_id not in seen_ids:
+                seen_ids.add(job_id)
+                collected.append(job)
+                new_count += 1
+
+        if new_count == 0:
+            break
+
+    return collected
 
 
 def fetch_all_pages_for_query(
@@ -142,17 +179,20 @@ def fetch_country_job_pool(
     country: str,
     target_rows: int,
     results_per_page: int = 25,
-    max_pages: int = 10,
+    start_page: int = 1,
+    end_page: int = 10,
+    use_fallbacks: bool = True,
 ) -> list[dict[str, Any]]:
     pool = []
     seen_ids = set()
 
     for role in TARGET_ROLE_QUERIES:
-        role_jobs = fetch_all_pages_for_query(
+        role_jobs = fetch_page_window_for_query(
             country=country,
             what=role,
+            start_page=start_page,
+            end_page=end_page,
             results_per_page=results_per_page,
-            max_pages=max_pages,
             use_category=True,
         )
 
@@ -165,23 +205,25 @@ def fetch_country_job_pool(
         if len(pool) >= target_rows:
             return pool[:target_rows]
 
-        for fallback in FALLBACK_QUERIES.get(role, []):
-            role_jobs = fetch_all_pages_for_query(
-                country=country,
-                what=fallback,
-                results_per_page=results_per_page,
-                max_pages=max_pages,
-                use_category=False,   # broaden here
-            )
+        if use_fallbacks:
+            for fallback in FALLBACK_QUERIES.get(role, []):
+                fallback_jobs = fetch_page_window_for_query(
+                    country=country,
+                    what=fallback,
+                    start_page=start_page,
+                    end_page=end_page,
+                    results_per_page=results_per_page,
+                    use_category=False,
+                )
 
-            for job in role_jobs:
-                job_id = str(job.get("id")) if job.get("id") is not None else None
-                if job_id and job_id not in seen_ids:
-                    seen_ids.add(job_id)
-                    pool.append(job)
+                for job in fallback_jobs:
+                    job_id = str(job.get("id")) if job.get("id") is not None else None
+                    if job_id and job_id not in seen_ids:
+                        seen_ids.add(job_id)
+                        pool.append(job)
 
-            if len(pool) >= target_rows:
-                return pool[:target_rows]
+                if len(pool) >= target_rows:
+                    return pool[:target_rows]
 
     return pool
 
@@ -192,12 +234,85 @@ def fetch_target_jobs() -> list[dict[str, Any]]:
     for country_name, country_code in TARGET_COUNTRIES.items():
         target_rows = COUNTRY_TARGETS[country_code]
         country_jobs = fetch_country_job_pool(
+    country=country_code,
+    target_rows=target_rows,
+    results_per_page=25,
+    start_page=1,
+    end_page=10,
+    use_fallbacks=True,
+)
+        print(f"{country_name} ({country_code}) final collected={len(country_jobs)}")
+        all_jobs.extend(country_jobs)
+
+    return all_jobs
+
+
+
+
+def fetch_target_jobs_recent_batch() -> list[dict[str, Any]]:
+    all_jobs = []
+
+    for country_name, country_code in TARGET_COUNTRIES.items():
+        target_rows = COUNTRY_TARGETS[country_code]
+
+        country_jobs = fetch_country_job_pool(
             country=country_code,
             target_rows=target_rows,
             results_per_page=25,
-            max_pages=10,
+            start_page=1,
+            end_page=5,
+            use_fallbacks=True,
         )
-        print(f"{country_name} ({country_code}) final collected={len(country_jobs)}")
+
+        print(f"{country_name} ({country_code}) recent batch collected={len(country_jobs)}")
+        all_jobs.extend(country_jobs)
+
+    return all_jobs
+
+
+def fetch_target_jobs_deep_batch() -> list[dict[str, Any]]:
+    all_jobs = []
+
+    for country_name, country_code in TARGET_COUNTRIES.items():
+        target_rows = COUNTRY_TARGETS[country_code] * 2
+
+        country_jobs = fetch_country_job_pool(
+            country=country_code,
+            target_rows=target_rows,
+            results_per_page=25,
+            start_page=6,
+            end_page=20,
+            use_fallbacks=True,
+        )
+
+        print(f"{country_name} ({country_code}) deep batch collected={len(country_jobs)}")
+        all_jobs.extend(country_jobs)
+
+    return all_jobs
+
+def fetch_target_jobs_stream() -> list[dict[str, Any]]:
+    all_jobs = []
+
+    stream_country_targets = {
+        "de": 40,
+        "ca": 40,
+        "us": 50,
+        "gb": 50,
+    }
+
+    for country_name, country_code in TARGET_COUNTRIES.items():
+        target_rows = stream_country_targets[country_code]
+
+        country_jobs = fetch_country_job_pool(
+            country=country_code,
+            target_rows=target_rows,
+            results_per_page=25,
+            start_page=1,
+            end_page=2,
+            use_fallbacks=False,
+        )
+
+        print(f"{country_name} ({country_code}) stream collected={len(country_jobs)}")
         all_jobs.extend(country_jobs)
 
     return all_jobs
@@ -270,5 +385,5 @@ def map_adzuna_job_to_schema(job: dict[str, Any]) -> dict[str, Any]:
 
 
 if __name__ == "__main__":
-    jobs = fetch_target_jobs()
+    jobs = fetch_target_jobs_stream()
     print(f"Total jobs fetched: {len(jobs)}")

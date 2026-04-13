@@ -13,7 +13,7 @@ TEXT_COLUMNS = [
     "employment_type",
 ]
 
-TEXT_CLEAN_COLUMNS = ["job_title", "city"]
+TEXT_CLEAN_COLUMNS = ["job_title", "city","description"]
 
 
 def _normalize_whitespace(value: str) -> str:
@@ -148,5 +148,222 @@ def drop_duplicates(df: pd.DataFrame) -> pd.DataFrame:
             "posted_year",
         ]
     )
+
+    return df
+
+
+def sanitize_extracted_city(candidate, country=None):
+    """
+    Only normalize:
+    - Remote
+    - Hybrid
+    - Onsite
+
+    Otherwise return cleaned candidate as-is.
+    """
+
+    if pd.isna(candidate):
+        return None
+
+    text = str(candidate).strip()
+    if not text:
+        return None
+
+    text_lower = text.lower()
+
+    if "remote" in text_lower:
+        return "Remote"
+
+    if "hybrid" in text_lower:
+        return "Hybrid"
+
+    if "onsite" in text_lower or "on-site" in text_lower or "on site" in text_lower:
+        return country if pd.notna(country) else None
+
+    return text
+
+def fill_missing_city(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Improved strategy:
+
+    Step 1: if city exists -> keep it
+    Step 2: if city missing, use remote_type FIRST:
+        - Remote -> "Remote"
+        - Hybrid -> country
+        - Onsite -> country
+    Step 3: if still missing -> extract from description
+    Step 4: final fallback -> country
+    """
+    df = df.copy()
+
+    if "city" not in df.columns:
+        return df
+
+    if "country" not in df.columns:
+        df["country"] = pd.NA
+
+    if "remote_type" not in df.columns:
+        df["remote_type"] = pd.NA
+
+    if "description" not in df.columns:
+        df["description"] = pd.NA
+
+    def extract_city_from_description(description, country):
+        if pd.isna(description):
+            return None
+
+        text = str(description).strip()
+        if not text:
+            return None
+
+        patterns = [
+            r"location\s*:\s*([A-ZÀ-ÖØ-Ý][A-Za-zÀ-ÖØ-öø-ÿ'`\- ]+)",
+            r"city\s*:\s*([A-ZÀ-ÖØ-Ý][A-Za-zÀ-ÖØ-öø-ÿ'`\- ]+)",
+            r"based in\s+([A-ZÀ-ÖØ-Ý][A-Za-zÀ-ÖØ-öø-ÿ'`\- ]+)",
+            r"located in\s+([A-ZÀ-ÖØ-Ý][A-Za-zÀ-ÖØ-öø-ÿ'`\- ]+)",
+        ]
+
+        for pattern in patterns:
+            match = re.search(pattern, text, flags=re.IGNORECASE)
+            if match:
+                candidate = match.group(1).strip()
+                candidate = re.sub(r"\s+", " ", candidate)
+                candidate = candidate.strip(" ,.;:-")
+                return sanitize_extracted_city(candidate, country)
+
+        return None
+
+    # Identify missing city
+    city_series = df["city"].astype("string")
+    missing_city_mask = city_series.isna() | (city_series.str.strip() == "")
+
+    remote_series = df["remote_type"].astype("string").str.strip()
+
+    # ✅ Step 2: PRIORITY → remote_type
+    remote_mask = missing_city_mask & (remote_series == "Remote")
+    hybrid_mask = missing_city_mask & (remote_series == "Hybrid")
+    onsite_mask = missing_city_mask & (remote_series == "Onsite")
+
+    df.loc[remote_mask, "city"] = "Remote"
+    df.loc[hybrid_mask, "city"] = df.loc[hybrid_mask, "country"]
+    df.loc[onsite_mask, "city"] = df.loc[onsite_mask, "country"]
+
+    # Recompute missing after remote_type
+    city_series = df["city"].astype("string")
+    missing_city_mask = city_series.isna() | (city_series.str.strip() == "")
+
+    # ✅ Step 3: extract from description ONLY if still missing
+    inferred_city = df.apply(
+        lambda row: extract_city_from_description(row["description"], row["country"]),
+        axis=1
+    )
+    fill_from_desc_mask = missing_city_mask & inferred_city.notna()
+    df.loc[fill_from_desc_mask, "city"] = inferred_city[fill_from_desc_mask]
+
+    # Recompute again
+    city_series = df["city"].astype("string")
+    missing_city_mask = city_series.isna() | (city_series.str.strip() == "")
+
+    # ✅ Step 4: final fallback → country
+    df.loc[missing_city_mask, "city"] = df.loc[missing_city_mask, "country"]
+
+    return df
+
+
+def fill_missing_employment_type(df: pd.DataFrame) -> pd.DataFrame:
+    df = df.copy()
+
+    if "employment_type" not in df.columns:
+        return df
+
+    if "description" not in df.columns:
+        df["description"] = pd.NA
+
+    def infer_from_description(text):
+        if pd.isna(text):
+            return None
+
+        text = str(text).lower()
+
+        if "full time" in text or "full-time" in text:
+            return "Full-time"
+
+        if "part time" in text or "part-time" in text:
+            return "Part-time"
+
+        if "contract" in text or "contractor" in text:
+            return "Contract"
+
+        if "intern" in text or "internship" in text:
+            return "Internship"
+
+        if "temporary" in text or "temp" in text:
+            return "Temporary"
+
+        return None
+
+    missing_mask = (
+        df["employment_type"].isna()
+        | (df["employment_type"].astype("string").str.strip() == "")
+    )
+
+    inferred = df.loc[missing_mask, "description"].apply(infer_from_description)
+
+    df.loc[missing_mask, "employment_type"] = inferred
+
+    # fallback
+    still_missing = (
+        df["employment_type"].isna()
+        | (df["employment_type"].astype("string").str.strip() == "")
+    )
+
+    df.loc[still_missing, "employment_type"] = "Full-time"
+
+    return df
+
+
+
+def fill_missing_remote_type(df: pd.DataFrame) -> pd.DataFrame:
+    df = df.copy()
+
+    if "remote_type" not in df.columns:
+        return df
+
+    if "description" not in df.columns:
+        df["description"] = pd.NA
+
+    def infer_remote(text):
+        if pd.isna(text):
+            return None
+
+        text = str(text).lower()
+
+        if "remote" in text or "work from home" in text or "wfh" in text:
+            return "Remote"
+
+        if "hybrid" in text:
+            return "Hybrid"
+
+        if "on-site" in text or "onsite" in text or "on site" in text:
+            return "Onsite"
+
+        return None
+
+    missing_mask = (
+        df["remote_type"].isna()
+        | (df["remote_type"].astype("string").str.strip() == "")
+    )
+
+    inferred = df.loc[missing_mask, "description"].apply(infer_remote)
+
+    df.loc[missing_mask, "remote_type"] = inferred
+
+    # fallback
+    still_missing = (
+        df["remote_type"].isna()
+        | (df["remote_type"].astype("string").str.strip() == "")
+    )
+
+    df.loc[still_missing, "remote_type"] = "Onsite"
 
     return df
