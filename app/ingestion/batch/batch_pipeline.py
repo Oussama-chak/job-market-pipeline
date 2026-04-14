@@ -66,7 +66,7 @@ if __name__ == "__main__":
     print("\nJob title sample:")
     print(unified_df["job_title"].head(10))
 
-    output_path = Path("data/processed/unified_jobs.csv")
+    output_path = Path("data/processed/batch_unified_jobs.csv")
     output_path.parent.mkdir(parents=True, exist_ok=True)
     unified_df.to_csv(output_path, index=False)
 

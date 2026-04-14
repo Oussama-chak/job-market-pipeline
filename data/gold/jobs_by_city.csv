@@ -1,0 +1,300 @@
+country,city,job_count
+UK,Remote,2804
+Canada,Remote,2780
+Germany,Remote,2751
+USA,Remote,2742
+UK,London,1979
+UK,Manchester,1906
+Canada,Toronto,1876
+Canada,Vancouver,1872
+UK,Birmingham,1870
+Canada,Montreal,1844
+Germany,Frankfurt,1432
+Germany,Hamburg,1410
+Germany,Munich,1405
+Germany,Berlin,1382
+USA,Austin,1178
+USA,New York,1121
+USA,Seattle,1120
+USA,San Francisco,1067
+USA,Boston,1062
+Canada,Canada,47
+UK,UK,28
+Germany,Germany,13
+Canada,Greater Vancouver,13
+UK,The City,13
+USA,USA,13
+Germany,München,12
+UK,Bristol,11
+Canada,Mississauga,8
+USA,Grand Central,8
+Germany,Münster,7
+USA,Charlotte,7
+Canada,Montréal,7
+USA,Atlanta,7
+Germany,Burgwedel,6
+USA,Rochester,5
+UK,Farringdon,5
+USA,International,5
+UK,North West England,5
+USA,Tarrytown,5
+Germany,Köln,4
+USA,Kirkland,4
+Germany,Mitte,4
+UK,Central London,4
+UK,Cambridge,4
+UK,Holborn,4
+UK,Hulme,4
+Germany,Frankfurt am Main,4
+Germany,Stuttgart,4
+Germany,Heilbronn,4
+UK,Warminster,4
+USA,"Washington, D.C.",4
+USA,Eldorado Springs,4
+USA,Grandview Heights,3
+Germany,Maxvorstadt,3
+USA,Pimmit,3
+Germany,Leipzig,3
+Germany,Laurensberg,3
+USA,Glendale,3
+USA,Highland Park,3
+Germany,Altencelle,3
+Canada,Cambridge,3
+USA,Alpharetta,3
+USA,Irving,3
+USA,Tysons Corner,3
+USA,Five Points,3
+USA,Illinois Medical District,3
+USA,Harvard Square,3
+Germany,Coburg,3
+Germany,Coesfeld,3
+USA,Nashville,3
+Canada,Ontario,3
+Germany,Düsseldorf,3
+Canada,North Vancouver,3
+Germany,Milbertshofen-Am Hart,3
+USA,Minneapolis,3
+UK,Uxbridge,2
+USA,Montpelier,2
+USA,Madison,2
+USA,Charleston,2
+USA,Carson Mall,2
+USA,Capitol,2
+UK,Boreham,2
+USA,Lansing,2
+UK,Blackfriars,2
+USA,Campbell,2
+USA,Mountain View,2
+USA,Cedar,2
+USA,Frankfort,2
+UK,Belfast,2
+UK,Aughton,2
+UK,Dean Clough Industrial Park,2
+UK,Cheshire,2
+UK,Glasgow City Centre,2
+USA,Houston,2
+USA,Denver,2
+UK,Ormeau,2
+USA,Inglewood,2
+UK,Lancashire,2
+UK,Paddington,2
+USA,Bonnie,2
+UK,Preston,2
+UK,Chesterton,2
+USA,Concord,2
+USA,Chisolm,2
+USA,Jackson,2
+UK,Edinburgh,2
+UK,Eastern England,2
+UK,Deeside,2
+USA,Addison,2
+USA,Huntsville,2
+UK,Newcastle Upon Tyne,2
+USA,Talcott Village,2
+USA,Trenton,2
+Canada,Hope,2
+USA,Prince,2
+USA,Providence,2
+USA,Tumwater,2
+USA,Reston,2
+USA,Topeka,2
+Germany,HafenCity,2
+Canada,Oakville,2
+USA,State House,2
+USA,Saint Paul,2
+USA,West Miami,2
+Germany,Dresden,2
+Germany,Dortmund,2
+USA,Uptown,2
+USA,SoMa,2
+Germany,Bemerode,2
+USA,Plano,2
+Germany,Leinfelden-Echterdingen,2
+Germany,Alsterdorf,2
+Germany,Taunusstein,2
+Canada,Burnaby,2
+USA,Ny State Campus,2
+Canada,Calgary,2
+Canada,Dorval,2
+USA,Old Sixth Ward,2
+USA,Palo Alto,2
+Germany,Oberkochen,2
+USA,Chicago,2
+Canada,Edmonton,2
+Canada,Georgetown,2
+Germany,Neckarsulm,2
+USA,Phoenix,2
+Germany,Moosach,2
+USA,Pierre,2
+Germany,Bult,2
+USA,Urbanización El Vedado,1
+USA,Fitchburg,1
+USA,Extensión Marbella,1
+USA,Englewood,1
+USA,New York City,1
+USA,Wake Island,1
+USA,Edgewood,1
+USA,Eden Prairie,1
+USA,Washington,1
+USA,Durham,1
+USA,Douglas,1
+USA,Des Moines,1
+USA,Westlake,1
+USA,Cooper City,1
+USA,Wolf Trap,1
+USA,Wyoming,1
+USA,Dallas,1
+USA,Sinking Spring,1
+USA,Tallahassee,1
+USA,Frederick,1
+USA,Mongmong,1
+USA,Oklahoma City,1
+USA,Millvale,1
+USA,Paramus,1
+USA,Philadelphia,1
+USA,Los Angeles,1
+USA,La Cienga,1
+USA,Pleasanton,1
+USA,Portland,1
+USA,Raleigh,1
+USA,Roanoke,1
+USA,Rockville,1
+USA,Sacramento,1
+USA,Salem,1
+USA,Salt Lake City,1
+USA,San Diego,1
+USA,San Jose,1
+USA,Santa Clara,1
+USA,Scottsdale,1
+USA,Helena,1
+USA,Mount Rainier,1
+USA,Hartford,1
+USA,South Camden,1
+USA,Springfield,1
+USA,State Farm,1
+USA,Sunset Park,1
+USA,Galena Park,1
+USA,Penbrook,1
+Canada,Brampton,1
+USA,Cammack Village,1
+Germany,Hamburg-Altstadt,1
+Germany,Darmstadt,1
+Germany,Eilbek,1
+Germany,Eschborn,1
+Germany,Essen,1
+Germany,Freiburg im Breisgau,1
+Germany,Friedrichstadt,1
+Germany,Gallus,1
+Germany,Geesthacht,1
+Germany,Gütersloh,1
+Germany,Halle (Saale),1
+Germany,Heidelberg,1
+Germany,Burgdorf,1
+Germany,Hürth,1
+Germany,Innenstadt,1
+Germany,Jena,1
+Germany,Kandel,1
+Germany,Karlsruhe,1
+Germany,Kiel,1
+Germany,Kinderhaus,1
+Germany,Ludwigsfeld,1
+Germany,Mannheim,1
+Germany,Munster,1
+Germany,Chemnitz,1
+Germany,Brünninghausen,1
+USA,Burke,1
+Canada,Unionville,1
+Canada,Downtown,1
+Canada,Greater Sudbury,1
+Canada,Markham,1
+Canada,Ontario or Quebec,1
+Canada,Oshawa,1
+Canada,Ottawa,1
+Canada,Québec,1
+Canada,Saint-Albert,1
+Canada,Saint-Laurent,1
+Canada,Sydney,1
+Canada,Westmount,1
+Germany,Bonn,1
+Canada,Whitby,1
+Germany,Altendorf,1
+Germany,Anger,1
+Germany,Aschheim,1
+Germany,Barmbek-Süd,1
+Germany,Bexbach,1
+Germany,Biebelried,1
+Germany,Bietigheim-Bissingen,1
+Germany,Bockenheim,1
+Germany,Bohlsbach,1
+Germany,Neustadt,1
+Germany,Niederrad,1
+Germany,Nippes,1
+UK,West Midlands,1
+UK,Northampton,1
+UK,Old Marston,1
+UK,Ormskirk,1
+UK,Pampisford,1
+UK,Riccarton,1
+UK,Sheffield,1
+UK,Stafford,1
+UK,Stirling,1
+UK,Up Hatherley,1
+UK,Vauxhall,1
+UK,Wolverhampton,1
+Germany,Nürnberg,1
+UK,York,1
+USA,Altoona,1
+USA,Annapolis,1
+USA,Archer,1
+USA,Augusta,1
+USA,Baton Rouge,1
+USA,Bee Cave,1
+USA,Bismarck,1
+USA,Blue Hills,1
+USA,Brooklyn,1
+UK,North London,1
+Canada,Burlington,1
+UK,Moorgate,1
+UK,London Colney,1
+Germany,Penzberg,1
+Germany,Raunheim,1
+Germany,Schöneberg,1
+Germany,Ulm,1
+Germany,Unterbilk,1
+Germany,Wallenhorst,1
+Germany,Wernau (Neckar),1
+Germany,Winterhude,1
+Germany,Wolfsburg,1
+Germany,Zell am Main,1
+UK,Artington,1
+UK,Barbican,1
+UK,Broadgate,1
+UK,Cambourne,1
+UK,Caversham,1
+UK,Churchbridge,1
+UK,Cookridge,1
+UK,Edinburgh City Centre,1
+UK,Emersons Green,1
+UK,Englefield,1
+UK,Liverpool,1
+USA,Wyomissing Hills,1
