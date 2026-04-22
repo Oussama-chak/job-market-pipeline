@@ -32,7 +32,7 @@ if __name__ == "__main__":
     for message in consumer:
         record = message.value
 
-        print("Received:", record)
+        print("Received:", record.get("job_title"))
 
         # Step 1: save raw Bronze record
         save_raw_record(record)

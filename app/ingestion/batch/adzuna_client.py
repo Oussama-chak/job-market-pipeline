@@ -237,8 +237,8 @@ def fetch_target_jobs() -> list[dict[str, Any]]:
     country=country_code,
     target_rows=target_rows,
     results_per_page=25,
-    start_page=1,
-    end_page=10,
+    start_page=4,
+    end_page=12,
     use_fallbacks=True,
 )
         print(f"{country_name} ({country_code}) final collected={len(country_jobs)}")

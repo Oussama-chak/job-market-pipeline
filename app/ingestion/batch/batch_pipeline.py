@@ -36,6 +36,7 @@ def run_batch_pipeline(
     csv_path: str,
     adzuna_page: int = 10,
     adzuna_results_per_page: int = 30,
+    output_path: str = "data/processed/batch_unified_jobs.csv",
 ) -> pd.DataFrame:
     csv_df = build_csv_dataframe(csv_path)
     adzuna_df = build_adzuna_dataframe(
@@ -44,6 +45,14 @@ def run_batch_pipeline(
     )
 
     unified_df = pd.concat([csv_df, adzuna_df], ignore_index=True)
+
+    output_path = Path(output_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    unified_df.to_csv(output_path, index=False)
+
+    print(f"\nUnified dataset saved to: {output_path}")
+    print(f"Unified dataset shape: {unified_df.shape}")
+
     return unified_df
 
 
@@ -56,18 +65,7 @@ if __name__ == "__main__":
         adzuna_results_per_page=30,
     )
 
-    print("\nUnified dataset shape:", unified_df.shape)
     print("\nUnified dataset columns:")
     print(unified_df.columns.tolist())
 
-    print("\nCountry distribution:")
-    print(unified_df["country"].value_counts(dropna=False))
-
-    print("\nJob title sample:")
-    print(unified_df["job_title"].head(10))
-
-    output_path = Path("data/processed/batch_unified_jobs.csv")
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    unified_df.to_csv(output_path, index=False)
-
-    print(f"\nUnified dataset saved to: {output_path}")
+   
